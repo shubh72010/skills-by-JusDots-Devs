@@ -31,28 +31,58 @@ Standard brainstorming tends to:
 ## The Five-Phase Workflow
 
 <p align="center">
-  <img src="images/workflow.png" alt="CrossThink Workflow Diagram" width="700"/>
+  <img src="images/workflow.png" alt="CrossThink Diff Workflow" width="700"/>
 </p>
 
-### Phase 1 — Primary Exploration
+Each phase is a diff hunk transforming the reasoning state — additions, deletions, and structural transformations — not a linear checklist.
 
-Explore the user's topic with depth across fundamentals, assumptions, applications, strengths, weaknesses, opportunities, limitations, related technologies, alternative approaches, unanswered questions, and future possibilities. Continue until additional exploration produces diminishing returns — the stopping criterion is based on **reasoning quality**, not an arbitrary number.
+```diff
+diff --phase 0..1  (primary exploration)
++ fundamentals   core principles and first principles
++ assumptions    question the unquestioned
++ strengths      what makes it powerful
++ weaknesses     where it breaks down
++ opportunities  gaps and unmet needs
++ limitations    hard constraints (physical, economic, temporal)
++ related-tech   adjacent methods and technologies
++ alternatives   other ways to solve the same problem
++ unknowns       what remains unanswered
++ future         what would transform this topic
+— stop when new ideas become restatements, not new lines of thought
 
-### Phase 2 — Independent Domain Exploration
+diff --phase 1..2  (independent domains)
++ biology          immune system, symbiosis, adaptation
++ aviation         checklists, redundancy, crew resource mgmt
++ economics        mechanism design, incentive alignment
++ architecture     spatial flow, wayfinding, thresholds
++ history          diffusion, transitions, forgotten ideas
++ linguistics      framing, pragmatics, semantic shift
+— detach completely — no referencing phase 1 notes
 
-Completely detach from the original topic. Select 2–4 distant domains (biology, aviation, economics, architecture, history, etc.) and explore each with equal depth **without referencing Phase 1 notes**. The goal is genuine cognitive independence.
+diff --phase 2..3  (cross-pollination)
+~ shared patterns       underlying structural similarity
+→ transferable ideas    methods crossing domain boundaries
+~ analogous systems     parallel mechanics beneath surface
+? hidden assumptions    what the original topic takes for granted
+— reject superficial connections — structural matches only
 
-### Phase 3 — Cross-Pollination
+diff --phase 3..4  (challenge / discard)
+? realism      achievable given known constraints?
+? evidence     anything supporting or contradicting?
+? prior-art    has this been attempted? what happened?
+? failure-modes    how could this fail specifically?
+− weak ideas   discarded with documented justification
++ strong       survives all challenges, generates novel value
+~ moderate     carries risk, needs validation
 
-Only after both explorations are complete, search for structural relationships. Shared patterns, transferable ideas, analogous systems, hidden assumptions, surprising similarities, and unconventional applications. Reject superficial analogies — only structural connections survive.
-
-### Phase 4 — Challenge
-
-Subject every major idea to scrutiny: realism, assumption validity, evidence, prior art, failure modes, and opportunity cost. Classify ideas as **Strong**, **Moderate**, or **Weak** with written justification. Discard weak ideas explicitly.
-
-### Phase 5 — Final Synthesis
-
-Produce the strongest insights, unexpected cross-domain connections, novel concepts, practical recommendations, open research questions, and promising future directions. Every major insight must include a **provenance explanation** of which phases and domains produced it.
+diff --phase 4..5  (final synthesis)
+= strongest insights      with full provenance trail
+= unexpected connections  cross-domain structural analogies
+= novel concepts          genuinely new, not restatements
+= recommendations         specific and actionable
+= open questions          unanswered, needing investigation
+= future directions       where it could go without constraints
+```
 
 ---
 
