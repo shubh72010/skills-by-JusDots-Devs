@@ -1,5 +1,5 @@
 ---
-name: divergent-cross-domain-brainstorming
+name: crossthink
 description: Forces exploration from multiple independent thinking directions before producing conclusions. Uses a five-phase workflow (primary exploration, independent domain exploration, cross-pollination, challenge, synthesis) to avoid tunnel vision, anchoring bias, and superficial ideation. Triggers on "brainstorm", "explore this topic", "think about", "discuss from multiple angles", or when the user explicitly requests divergent thinking.
 version: 1.0.0
 author: opencode
