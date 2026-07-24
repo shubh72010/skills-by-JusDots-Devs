@@ -3,7 +3,7 @@
 [![License: GPL-3.0](https://img.shields.io/badge/License-GPL--3.0-blue.svg)](LICENSE)
 [![Skills Hub](https://img.shields.io/badge/Hub-skills--by--JusDots--Devs-purple)](https://github.com/shubh72010/skills-by-JusDots-Devs)
 [![Format: Reusable Skill](https://img.shields.io/badge/Format-Reusable%20Skill-green)](/)
-[<arg_value>5 Phases](https://github.com/shubh72010/skills-by-JusDots-Devs/blob/main/SKILL.md)](https://github.com/shubh72010/skills-by-JusDots-Devs/blob/main/SKILL.md)
+[![5 Phases](https://github.com/shubh72010/skills-by-JusDots-Devs/blob/main/SKILL.md)](https://github.com/shubh72010/skills-by-JusDots-Devs/blob/main/SKILL.md)
 
 > **A structured reasoning methodology that reduces anchoring bias by separating exploration, independent domain analysis, synthesis, and critical evaluation into distinct phases.**
 
