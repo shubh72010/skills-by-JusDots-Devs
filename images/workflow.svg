@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="800" height="600">
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#555"/>
+    </marker>
+    <linearGradient id="phaseGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4a90d9;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#67c23a;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="115%" height="115%">
+      <feDropShadow dx="1" dy="2" stdDeviation="2" flood-opacity="0.15"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="800" height="600" fill="#fafafa" rx="8"/>
+
+  <!-- Title -->
+  <text x="400" y="35" text-anchor="middle" font-family="system-ui, sans-serif" font-size="18" font-weight="bold" fill="#333">Divergent Cross-Domain Brainstorming — Workflow</text>
+
+  <!-- Phase boxes -->
+  <!-- Phase 1 -->
+  <rect x="275" y="55" width="250" height="60" rx="10" fill="url(#phaseGrad)" filter="url(#shadow)"/>
+  <text x="400" y="78" text-anchor="middle" font-family="system-ui, sans-serif" font-size="13" font-weight="bold" fill="#fff">1. Primary Exploration</text>
+  <text x="400" y="98" text-anchor="middle" font-family="system-ui, sans-serif" font-size="10" fill="#eef">Topic deep dive · fundamentals, assumptions, strengths, weaknesses</text>
+
+  <!-- Arrow 1→2 -->
+  <line x1="400" y1="115" x2="400" y2="145" stroke="#555" stroke-width="2" marker-end="url(#arrowhead)"/>
+
+  <!-- Phase 2 -->
+  <rect x="275" y="148" width="250" height="60" rx="10" fill="url(#phaseGrad)" filter="url(#shadow)"/>
+  <text x="400" y="171" text-anchor="middle" font-family="system-ui, sans-serif" font-size="13" font-weight="bold" fill="#fff">2. Independent Domains</text>
+  <text x="400" y="191" text-anchor="middle" font-family="system-ui, sans-serif" font-size="10" fill="#eef">2–4 distant domains · biology, economics, architecture...</text>
+
+  <!-- Arrow 2→3 -->
+  <line x1="400" y1="208" x2="400" y2="238" stroke="#555" stroke-width="2" marker-end="url(#arrowhead)"/>
+
+  <!-- Phase 3 -->
+  <rect x="275" y="241" width="250" height="60" rx="10" fill="url(#phaseGrad)" filter="url(#shadow)"/>
+  <text x="400" y="264" text-anchor="middle" font-family="system-ui, sans-serif" font-size="13" font-weight="bold" fill="#fff">3. Cross-Pollination</text>
+  <text x="400" y="284" text-anchor="middle" font-family="system-ui, sans-serif" font-size="10" fill="#eef">Shared patterns · transferable ideas · hidden assumptions</text>
+
+  <!-- Arrow 3→4 -->
+  <line x1="400" y1="301" x2="400" y2="331" stroke="#555" stroke-width="2" marker-end="url(#arrowhead)"/>
+
+  <!-- Phase 4 -->
+  <rect x="275" y="334" width="250" height="60" rx="10" fill="url(#phaseGrad)" filter="url(#shadow)"/>
+  <text x="400" y="357" text-anchor="middle" font-family="system-ui, sans-serif" font-size="13" font-weight="bold" fill="#fff">4. Challenge</text>
+  <text x="400" y="377" text-anchor="middle" font-family="system-ui, sans-serif" font-size="10" fill="#eef">Realism · assumptions · evidence · failure modes</text>
+
+  <!-- Arrow 4→5 -->
+  <line x1="400" y1="394" x2="400" y2="424" stroke="#555" stroke-width="2" marker-end="url(#arrowhead)"/>
+
+  <!-- Phase 5 -->
+  <rect x="275" y="427" width="250" height="60" rx="10" fill="url(#phaseGrad)" filter="url(#shadow)"/>
+  <text x="400" y="450" text-anchor="middle" font-family="system-ui, sans-serif" font-size="13" font-weight="bold" fill="#fff">5. Final Synthesis</text>
+  <text x="400" y="470" text-anchor="middle" font-family="system-ui, sans-serif" font-size="10" fill="#eef">Strongest insights · novel connections · recommendations</text>
+
+  <!-- Side annotations -->
+  <!-- Left side: key principle for each phase -->
+  <rect x="30" y="55" width="220" height="20" rx="4" fill="none" stroke="#ccc" stroke-width="1"/>
+  <text x="140" y="69" text-anchor="middle" font-family="system-ui, sans-serif" font-size="9" fill="#888">Key principle: Generate freely</text>
+
+  <rect x="30" y="148" width="220" height="20" rx="4" fill="none" stroke="#ccc" stroke-width="1"/>
+  <text x="140" y="162" text-anchor="middle" font-family="system-ui, sans-serif" font-size="9" fill="#888">Key principle: Detach completely</text>
+
+  <rect x="30" y="241" width="220" height="20" rx="4" fill="none" stroke="#ccc" stroke-width="1"/>
+  <text x="140" y="255" text-anchor="middle" font-family="system-ui, sans-serif" font-size="9" fill="#888">Key principle: Search for structure</text>
+
+  <rect x="30" y="334" width="220" height="20" rx="4" fill="none" stroke="#ccc" stroke-width="1"/>
+  <text x="140" y="348" text-anchor="middle" font-family="system-ui, sans-serif" font-size="9" fill="#888">Key principle: Be skeptical</text>
+
+  <rect x="30" y="427" width="220" height="20" rx="4" fill="none" stroke="#ccc" stroke-width="1"/>
+  <text x="140" y="441" text-anchor="middle" font-family="system-ui, sans-serif" font-size="9" fill="#888">Key principle: Prove your reasoning</text>
+
+  <!-- Right side: guardrails -->
+  <rect x="550" y="55" width="220" height="432" rx="10" fill="#f5f5f5" stroke="#e0e0e0" stroke-width="1"/>
+  <text x="660" y="78" text-anchor="middle" font-family="system-ui, sans-serif" font-size="11" font-weight="bold" fill="#555">Guardrails</text>
+  <text x="565" y="100" font-family="system-ui, sans-serif" font-size="9" fill="#666">• Never evaluate during phases 1–2</text>
+  <text x="565" y="118" font-family="system-ui, sans-serif" font-size="9" fill="#666">• Never force a connection</text>
+  <text x="565" y="136" font-family="system-ui, sans-serif" font-size="9" fill="#666">• Never skip phase 4 (challenge)</text>
+  <text x="565" y="154" font-family="system-ui, sans-serif" font-size="9" fill="#666">• Respect diminishing returns</text>
+  <text x="565" y="172" font-family="system-ui, sans-serif" font-size="9" fill="#666">• Phase 2 must be truly independent</text>
+  <text x="565" y="190" font-family="system-ui, sans-serif" font-size="9" fill="#666">• Every claim needs reasoning</text>
+  <text x="565" y="208" font-family="system-ui, sans-serif" font-size="9" fill="#666">• Don't over-extend — quality > quantity</text>
+  <text x="565" y="240" font-family="system-ui, sans-serif" font-size="11" font-weight="bold" fill="#555">Failure Modes</text>
+  <text x="565" y="262" font-family="system-ui, sans-serif" font-size="9" fill="#666">• Shallow exploration</text>
+  <text x="565" y="280" font-family="system-ui, sans-serif" font-size="9" fill="#666">• Anchoring bias</text>
+  <text x="565" y="298" font-family="system-ui, sans-serif" font-size="9" fill="#666">• Forced connections</text>
+  <text x="565" y="316" font-family="system-ui, sans-serif" font-size="9" fill="#666">• Premature synthesis</text>
+  <text x="565" y="334" font-family="system-ui, sans-serif" font-size="9" fill="#666">• Yes-machining weak ideas</text>
+  <text x="565" y="352" font-family="system-ui, sans-serif" font-size="9" fill="#666">• Domain selection bias</text>
+  <text x="565" y="370" font-family="system-ui, sans-serif" font-size="9" fill="#666">• Missing provenance</text>
+  <text x="565" y="410" font-family="system-ui, sans-serif" font-size="11" font-weight="bold" fill="#555">Evaluation</text>
+  <text x="565" y="432" font-family="system-ui, sans-serif" font-size="9" fill="#666">All 5 phases done, none skipped</text>
+  <text x="565" y="450" font-family="system-ui, sans-serif" font-size="9" fill="#666">Ideas rated Strong/Moderate/Weak</text>
+  <text x="565" y="468" font-family="system-ui, sans-serif" font-size="9" fill="#666">At least 1 non-obvious connection</text>
+  <text x="565" y="486" font-family="system-ui, sans-serif" font-size="9" fill="#666">Every insight has provenance</text>
+</svg>
