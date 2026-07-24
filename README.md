@@ -88,19 +88,37 @@ diff --phase 4..5  (final synthesis)
 
 ## Quick Start
 
-### OpenCode
+### Install all JusDots skills
+
+```bash
+npx skills add shubh72010/skills-by-JusDots-Devs
+```
+
+### Install a specific skill
+
+```bash
+npx skills add shubh72010/skills-by-JusDots-Devs --skill crossthink
+```
+
+### List available skills
+
+```bash
+npx skills add shubh72010/skills-by-JusDots-Devs --list
+```
+
+### Use CrossThink in OpenCode
 
 ```text
 /opencode: crossthink Brainstorm browser security
 ```
 
-### Claude Code
+### Use CrossThink in Claude Code
 
 ```text
 Use the crossthink skill to explore: browser security
 ```
 
-### Codex
+### Use CrossThink in Codex
 
 ```text
 /run crossthink Topic: browser security
