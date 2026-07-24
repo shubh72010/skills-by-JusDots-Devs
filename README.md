@@ -1,4 +1,4 @@
-# divergent-cross-domain-brainstorming
+# crossthink
 
 A structured reasoning methodology that reduces anchoring bias by separating exploration, independent domain analysis, synthesis, and critical evaluation into distinct phases.
 
@@ -65,19 +65,19 @@ Topic
 ### With OpenCode
 
 ```
-/opencode: divergent-cross-domain-brainstorming brainstorm browser security
+/opencode: crossthink brainstorm browser security
 ```
 
 ### With Claude Code
 
 ```
-Use the divergent-cross-domain-brainstorming skill to explore: browser security
+Use the crossthink skill to explore: browser security
 ```
 
 ### With Codex
 
 ```
-/run divergent-cross-domain-brainstorming Topic: browser security
+/run crossthink Topic: browser security
 ```
 
 ### General usage
@@ -115,7 +115,7 @@ Invoke the skill with any open-ended topic. The skill handles the rest.
 ## Project Structure
 
 ```
-divergent-cross-domain-brainstorming/
+crossthink/
 ├── README.md
 ├── LICENSE
 ├── SKILL.md
