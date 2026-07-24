@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 400" width="1200" height="400">
+  <defs>
+    <linearGradient id="heroBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0f172a" />
+      <stop offset="50%" style="stop-color:#1e293b" />
+      <stop offset="100%" style="stop-color:#0f172a" />
+    </linearGradient>
+    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#6366f1" />
+      <stop offset="50%" style="stop-color:#a855f7" />
+      <stop offset="100%" style="stop-color:#ec4899" />
+    </linearGradient>
+    <filter id="shadow">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="400" rx="16" fill="url(#heroBg)"/>
+
+  <!-- Decorative circles -->
+  <circle cx="100" cy="80" r="120" fill="rgba(99,102,241,0.06)"/>
+  <circle cx="1100" cy="320" r="100" fill="rgba(236,72,153,0.06)"/>
+  <circle cx="600" cy="200" r="180" fill="rgba(168,85,247,0.04)"/>
+
+  <!-- Title -->
+  <text x="600" y="100" text-anchor="middle" font-family="'Inter', system-ui, sans-serif" font-size="42" font-weight="800" fill="#f1f5f9" letter-spacing="-0.5">CrossThink</text>
+
+  <!-- Subtitle -->
+  <text x="600" y="138" text-anchor="middle" font-family="'Inter', system-ui, sans-serif" font-size="16" fill="#94a3b8">A structured reasoning methodology that reduces anchoring bias by separating exploration, independent domain analysis, synthesis, and critical evaluation into distinct phases.</text>
+
+  <!-- Accent line -->
+  <rect x="400" y="160" width="400" height="3" rx="1.5" fill="url(#accent)"/>
+
+  <!-- Phase dots -->
+  <circle cx="150" cy="210" r="22" fill="url(#heroBg)" stroke="#6366f1" stroke-width="2.5" filter="url(#shadow)"/>
+  <text x="150" y="216" text-anchor="middle" font-family="'Inter', system-ui, sans-serif" font-size="12" font-weight="700" fill="#fff">1</text>
+
+  <circle cx="350" cy="210" r="22" fill="url(#heroBg)" stroke="#06b6d4" stroke-width="2.5" filter="url(#shadow)"/>
+  <text x="350" y="216" text-anchor="middle" font-family="'Inter', system-ui, sans-serif" font-size="12" font-weight="700" fill="#fff">2</text>
+
+  <circle cx="550" cy="210" r="22" fill="url(#heroBg)" stroke="#f59e0b" stroke-width="2.5" filter="url(#shadow)"/>
+  <text x="550" y="216" text-anchor="middle" font-family="'Inter', system-ui, sans-serif" font-size="12" font-weight="700" fill="#fff">3</text>
+
+  <circle cx="750" cy="210" r="22" fill="url(#heroBg)" stroke="#ec4899" stroke-width="2.5" filter="url(#shadow)"/>
+  <text x="750" y="216" text-anchor="middle" font-family="'Inter', system-ui, sans-serif" font-size="12" font-weight="700" fill="#fff">4</text>
+
+  <circle cx="950" cy="210" r="22" fill="url(#heroBg)" stroke="#10b981" stroke-width="2.5" filter="url(#shadow)"/>
+  <text x="950" y="216" text-anchor="middle" font-family="'Inter', system-ui, sans-serif" font-size="12" font-weight="700" fill="#fff">5</text>
+
+  <!-- Connector line between dots -->
+  <line x1="175" y1="210" x2="325" y2="210" stroke="#475569" stroke-width="2"/>
+  <line x1="375" y1="210" x2="525" y2="210" stroke="#475569" stroke-width="2"/>
+  <line x1="575" y1="210" x2="725" y2="210" stroke="#475569" stroke-width="2"/>
+  <line x1="775" y1="210" x2="925" y2="210" stroke="#475569" stroke-width="2"/>
+
+  <!-- Phase labels -->
+  <text x="150" y="250" text-anchor="middle" font-family="'Inter', system-ui, sans-serif" font-size="10" fill="#64748b">Explore</text>
+  <text x="350" y="250" text-anchor="middle" font-family="'Inter', system-ui, sans-serif" font-size="10" fill="#64748b">Domains</text>
+  <text x="550" y="250" text-anchor="middle" font-family="'Inter', system-ui, sans-serif" font-size="10" fill="#64748b">Connect</text>
+  <text x="750" y="250" text-anchor="middle" font-family="'Inter', system-ui, sans-serif" font-size="10" fill="#64748b">Challenge</text>
+  <text x="950" y="250" text-anchor="middle" font-family="'Inter', system-ui, sans-serif" font-size="10" fill="#64748b">Synthesis</text>
+
+  <!-- Bottom tagline -->
+  <text x="600" y="310" text-anchor="middle" font-family="'Inter', system-ui, sans-serif" font-size="13" fill="#94a3b8">Five phases · Domain-agnostic · Evaluates before concluding</text>
+
+  <!-- Badges area -->
+  <rect x="350" y="330" width="180" height="28" rx="14" fill="rgba(99,102,241,0.15)" stroke="rgba(99,102,241,0.3)" stroke-width="1"/>
+  <text x="440" y="349" text-anchor="middle" font-family="'Inter', system-ui, sans-serif" font-size="11" fill="#a5b4fc">5-phase methodology</text>
+
+  <rect x="560" y="330" width="180" height="28" rx="14" fill="rgba(16,185,129,0.15)" stroke="rgba(16,185,129,0.3)" stroke-width="1"/>
+  <text x="650" y="349" text-anchor="middle" font-family="'Inter', system-ui, sans-serif" font-size="11" fill="#6ee7b7">12 deliverables</text>
+
+  <rect x="770" y="330" width="140" height="28" rx="14" fill="rgba(236,72,153,0.15)" stroke="rgba(236,72,153,0.3)" stroke-width="1"/>
+  <text x="840" y="349" text-anchor="middle" font-family="'Inter', system-ui, sans-serif" font-size="11" fill="#f9a8d4">4 evaluation axes</text>
+</svg>

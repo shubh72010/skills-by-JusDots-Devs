@@ -1,136 +1,176 @@
-# crossthink
+# CrossThink
 
-A structured reasoning methodology that reduces anchoring bias by separating exploration, independent domain analysis, synthesis, and critical evaluation into distinct phases.
+[![License: GPL-3.0](https://img.shields.io/badge/License-GPL--3.0-blue.svg)](LICENSE)
+[![Skills Hub](https://img.shields.io/badge/Hub-skills--by--JusDots--Devs-purple)](https://github.com/shubh72010/skills-by-JusDots-Devs)
+[![Format: Reusable Skill](https://img.shields.io/badge/Format-Reusable%20Skill-green)](/)
+[<arg_value>5 Phases](https://github.com/shubh72010/skills-by-JusDots-Devs/blob/main/SKILL.md)](https://github.com/shubh72010/skills-by-JusDots-Devs/blob/main/SKILL.md)
 
-> **Not just a brainstorming prompt.** This defines a reasoning process with phases, failure modes, guardrails, evaluation criteria, and worked examples — something other agents can actually use or build on.
+> **A structured reasoning methodology that reduces anchoring bias by separating exploration, independent domain analysis, synthesis, and critical evaluation into distinct phases.**
+
+CrossThink is not just a brainstorming prompt — it is a **reasoning framework** with phases, failure modes, guardrails, evaluation criteria, and worked examples. It is designed to produce genuinely novel ideas rather than merely expanding on the user's original topic.
+
+<p align="center">
+  <img src="images/hero.png" alt="CrossThink Banner" width="720"/>
+</p>
+
+---
 
 ## The Problem
 
-Standard brainstorming tends to amplify the user's existing assumptions, anchors too quickly on the first framing, and produces variations on a single theme. This methodology addresses those failures by:
+Standard brainstorming tends to:
 
-- **Separating exploration from connection.** Ideas are generated independently before any mapping between domains.
-- **Forcing cognitive detachment.** The agent must genuinely leave the original topic and explore unrelated domains with equal depth.
-- **Challenging before concluding.** Every generated idea is stress-tested for realism, evidence, and hidden assumptions before the final synthesis.
-- **Maximizing novelty.** Cross-domain concepts emerge from structural similarity, not superficial analogy.
+| ❌ Problem | ✅ CrossThink Solution |
+|---|---|
+| Anchors too quickly on the user's original framing | **Phase 1** explores the topic deeply, then **Phase 2** forces complete detachment and independent domain exploration |
+| Produces variations on a single theme | **Phase 3** searches for structural connections to distant domains — not surface-level analogies |
+| No critical evaluation before committing | **Phase 4** subjects every idea to realism, evidence, and failure-mode challenges |
+| No reproducibility — reasoning is lost | **Phase 5** requires provenance for every major insight |
+
+---
 
 ## The Five-Phase Workflow
 
-```
-Topic
-  │
-  ▼
-┌─────────────────────────┐
-│  1. Primary Exploration │   Explore the topic deeply — fundamentals,
-│                         │    assumptions, strengths, weaknesses,
-│                         │    opportunities, limitations, future.
-│                         │    Stop when diminishing returns hit.
-└────────────┬────────────┘
-             │
-             ▼
-┌─────────────────────────┐
-│ 2. Independent Domains  │   Detach completely. Pick 2–4 distant
-│                         │    domains (biology, aviation, economics,
-│                         │    architecture, etc.). Explore each
-│                         │    with equal depth — no forced connections.
-└────────────┬────────────┘
-             │
-             ▼
-┌─────────────────────────┐
-│    3. Cross-Pollination │   Now search for relationships.
-│                         │    Shared patterns, transferable ideas,
-│                         │    analogous systems, hidden assumptions,
-│                         │    surprising similarities.
-└────────────┬────────────┘
-             │
-             ▼
-┌─────────────────────────┐
-│      4. Challenge       │   Subject every idea to scrutiny.
-│                         │    Is it realistic? What assumptions
-│                         │    are wrong? Evidence for/against?
-│                         │    Has it been tried? Why might it fail?
-└────────────┬────────────┘
-             │
-             ▼
-┌─────────────────────────┐
-│   5. Final Synthesis    │   Strongest insights, unexpected
-│                         │    connections, novel concepts,
-│                         │    practical recommendations,
-│                         │    open questions, future directions.
-│                         │    Explain why each insight emerged.
-└─────────────────────────┘
-```
+<p align="center">
+  <img src="images/workflow.png" alt="CrossThink Workflow Diagram" width="700"/>
+</p>
+
+### Phase 1 — Primary Exploration
+
+Explore the user's topic with depth across fundamentals, assumptions, applications, strengths, weaknesses, opportunities, limitations, related technologies, alternative approaches, unanswered questions, and future possibilities. Continue until additional exploration produces diminishing returns — the stopping criterion is based on **reasoning quality**, not an arbitrary number.
+
+### Phase 2 — Independent Domain Exploration
+
+Completely detach from the original topic. Select 2–4 distant domains (biology, aviation, economics, architecture, history, etc.) and explore each with equal depth **without referencing Phase 1 notes**. The goal is genuine cognitive independence.
+
+### Phase 3 — Cross-Pollination
+
+Only after both explorations are complete, search for structural relationships. Shared patterns, transferable ideas, analogous systems, hidden assumptions, surprising similarities, and unconventional applications. Reject superficial analogies — only structural connections survive.
+
+### Phase 4 — Challenge
+
+Subject every major idea to scrutiny: realism, assumption validity, evidence, prior art, failure modes, and opportunity cost. Classify ideas as **Strong**, **Moderate**, or **Weak** with written justification. Discard weak ideas explicitly.
+
+### Phase 5 — Final Synthesis
+
+Produce the strongest insights, unexpected cross-domain connections, novel concepts, practical recommendations, open research questions, and promising future directions. Every major insight must include a **provenance explanation** of which phases and domains produced it.
+
+---
 
 ## Quick Start
 
-### With OpenCode
+### OpenCode
 
-```
-/opencode: crossthink brainstorm browser security
+```text
+/opencode: crossthink Brainstorm browser security
 ```
 
-### With Claude Code
+### Claude Code
 
-```
+```text
 Use the crossthink skill to explore: browser security
 ```
 
-### With Codex
+### Codex
 
-```
+```text
 /run crossthink Topic: browser security
 ```
 
-### General usage
+Any open-ended topic works — technical, scientific, creative, business, or philosophical.
 
-Invoke the skill with any open-ended topic. The skill handles the rest.
-
-## Example Prompts
-
-- "Brainstorm future directions for batteries"
-- "Discuss browser security from multiple angles"
-- "Design a music player using divergent thinking"
-- "Explore what if education worked like manufacturing"
-- "Think about the future of work"
+---
 
 ## Examples
 
-| Topic | Output |
-|-------|--------|
-| Browser security | [examples/browser-security.md](examples/browser-security.md) |
-| Music player | [examples/music-player.md](examples/music-player.md) |
-| Startup ideas | [examples/startup-ideas.md](examples/startup-ideas.md) |
+| Topic | Highlights |
+|---|---|
+| **[Browser Security](examples/browser-security.md)** | Aviation checklists → structured extension audits; immune system → adaptive "fever mode"; mechanism design → ad-revenue tension as a security vulnerability |
+| **[Music Player](examples/music-player.md)** | Architecture spatial design → security zone visualization for tabs; education scaffolding → scaffolded music discovery; manufacturing bottleneck analysis → skip-pattern UX redesign |
+| **[Startup Ideas](examples/startup-ideas.md)** | Ecology symbiosis → mutualistic startup partnerships; history diffusion → Global South timing advantage; game design emergence → emergent product architecture |
+
+---
 
 ## Before vs. After
 
-**Before (anchored brainstorming):**
-> "Browser security: use sandboxing, add CSP headers, implement extensions permissions…"
-> *(All ideas are extensions of the user's existing framing.)*
+**Before** (anchored brainstorming of browser security):
 
-**After (divergent cross-domain):**
-> Browser security + aviation checklists → structured audit protocols for extensions
-> Browser security + immunology → adaptive "security memory" that learns attack patterns
-> Browser security + mechanism design → resolving the tension between ad revenue and security
-> *(Novel connections that wouldn't emerge from topic-only exploration.)*
+> Use sandboxing, add CSP headers, implement extensions permissions, deploy an ad-blocker, enable safe browsing…
+> *All ideas are obvious extensions of the user's existing framing.*
+
+**After** (CrossThink divergent cross-domain):
+
+> Browser extension review should adopt aviation-style structured checklists — proven to reduce human error by 90%+ in high-stakes environments. The immune system model suggests a "security memory" that learns attack patterns. The mechanism design lens reveals an unaddressed tension between ad revenue and security in the browser business model itself.
+> *Novel connections that would never emerge from topic-only exploration.*
+
+---
+
+## Design Principles
+
+```
+┌─────────────────────────────────────────────────────┐
+│  🧠 Separate exploration from evaluation            │
+│  🧭 Resist premature connections                   │
+│  🎯 Prioritize depth over breadth                  │
+│  📐 Choose domains for distance, not relevance     │
+│  🔍 Question the question, not just the answer     │
+│  💰 Quality over quantity, always                  │
+│  🛡️ Every claim requires a reasoning chain         │
+└─────────────────────────────────────────────────────┘
+```
+
+---
 
 ## Project Structure
 
-```
+```text
 crossthink/
-├── README.md
-├── LICENSE
-├── SKILL.md
+├── README.md                  ← You are here
+├── SKILL.md                   ← Full methodology specification (448 lines)
+├── LICENSE                    ← GPL-3.0
 ├── examples/
-│   ├── browser-security.md
-│   ├── music-player.md
-│   └── startup-ideas.md
+│   ├── browser-security.md    ← Worked example: browser security
+│   ├── music-player.md        ← Worked example: music player design
+│   └── startup-ideas.md       ← Worked example: startup ideation
 └── images/
-    └── workflow.png
+    ├── hero.png               ← Banner image for README
+    ├── workflow.png           ← 5-phase workflow diagram
+    └── workflow.svg           ← Editable SVG source
 ```
+
+---
+
+## Specification
+
+The full skill specification is in [`SKILL.md`](SKILL.md). It includes:
+
+- **Skill metadata** — name, description, version, tags, related skills
+- **Activation criteria** — when to invoke and when not to
+- **Internal reasoning workflow** — transition logs for reproducible reasoning
+- **10 best practices** — principles for effective execution
+- **8 failure modes** — symptoms, prevention, and detection
+- **7 guardrails** — hard constraints that cannot be violated
+- **2 worked example conversations** — browser security and music player
+- **Full output template** — with all phases, reasoning log, and evaluation checklist
+
+---
+
+## Evaluation Criteria
+
+| Axis | Check |
+|---|---|
+| **Completeness** | All 5 phases executed in order, none skipped |
+| **Quality** | Cross-domain connections are structural, not superficial |
+| **Novelty** | At least one idea that would not emerge from topic-only brainstorming |
+| **Reproducibility** | Transition log is complete and an independent agent could reconstruct the reasoning chain |
+
+---
 
 ## License
 
-This project is licensed under the GNU General Public License v3.0. See [LICENSE](LICENSE) for details.
+[GPL-3.0](LICENSE)
 
-## Contributing
+---
 
-Contributions welcome. To add a new example, place it in `examples/` with a descriptive filename. To improve the methodology, edit `SKILL.md`.
+## Related
+
+Part of the **[skills-by-JusDots-Devs](https://github.com/shubh72010/skills-by-JusDots-Devs)** hub — a collection of reusable agent skills for specialized reasoning, development workflows, and creative problem-solving.
