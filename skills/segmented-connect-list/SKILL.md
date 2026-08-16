@@ -2,7 +2,7 @@
 name: segmented-connect-list
 description: Build a Jetpack Compose list where each row looks separate but connected, like a single rounded panel split into segments. Each row is its own Card, spaced 2dp apart, with corner radii that change per position — big (28dp) rounded corners on the group's outer edges and small (6dp) inner corners, so the group reads as one unified panel. Use when implementing segmented/grouped row lists, connected pill lists, split-list UI, "separate but connected" rows, or grouped cards with rounded corners.
 version: 1.0.0
-author: JusDots Devs
+author: JusDots Devs - Folius
 domain: Android UI development
 tags: jetpack-compose, ui, segmented-list, material3, android
 related_skills:
