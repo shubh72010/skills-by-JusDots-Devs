@@ -12,6 +12,7 @@ covering specialized reasoning, development workflows, and UI/UX building blocks
 |---|---|---|---|
 | **crossthink** | Reasoning | Divergent cross-domain brainstorming: a 5-phase workflow that separates exploration, independent domain analysis, synthesis, and critical evaluation to avoid anchoring bias. | [README](skills/crossthink/README.md) · [SKILL](skills/crossthink/SKILL.md) |
 | **segmented-connect-list** | UI building blocks | Jetpack Compose rows that look "separate but connected" — a single rounded panel split into segments via per-position corner radii and a 2dp seam gap. | [SKILL](skills/segmented-connect-list/SKILL.md) |
+| **centered-hero-carousel** | UI building blocks | Morphing hero carousel — a big center card that continuously changes width into different-size rectangles as it scrolls (Material 3 / Quick Picks effect). Pager + clip + translate, with a no-experimental-API fallback and cross-framework porting math. | [SKILL](skills/centered-hero-carousel/SKILL.md) |
 
 ## Quick Start
 
