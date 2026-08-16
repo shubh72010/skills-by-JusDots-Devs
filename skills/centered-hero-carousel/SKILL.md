@@ -1,6 +1,6 @@
 ---
 name: centered-hero-carousel
-description: Build a horizontally scrollable "hero carousel" where a big center card continuously morphs its width into different-size rectangles as it scrolls (the Material 3 / music-app "Quick Picks" effect). Explains why it is a pager with clipping + translation (not resizing), then gives three clearly-labeled fidelity tiers: exact Material replication, a faithful custom keyline implementation (no experimental API), and a scale-based approximation. Includes the real keyline interpolation math and cross-framework porting notes. Use when implementing hero carousels, morphing/expanding cards, centered featured-card rows, "big card shrinks as it scrolls", or cover-flow-style pager UIs.
+description: 'Build a horizontally scrollable "hero carousel" where a big center card continuously morphs its width into different-size rectangles as it scrolls (the Material 3 / music-app "Quick Picks" effect). Explains why it is a pager with clipping + translation (not resizing), then gives three clearly-labeled fidelity tiers - exact Material replication, a faithful custom keyline implementation (no experimental API), and a scale-based approximation. Includes the real keyline interpolation math and cross-framework porting notes. Use when implementing hero carousels, morphing/expanding cards, centered featured-card rows, "big card shrinks as it scrolls", or cover-flow-style pager UIs.'
 version: 1.1.0
 author: JusDots Devs
 domain: UI / interaction design
