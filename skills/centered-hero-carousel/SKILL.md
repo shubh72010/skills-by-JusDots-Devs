@@ -1,7 +1,7 @@
 ---
 name: centered-hero-carousel
-description: Build a horizontally scrollable "hero carousel" where a big center card continuously morphs its width into different-size rectangles as it scrolls (the Material 3 / music-app "Quick Picks" effect). Explains why it is a pager with clipping + translation (not resizing), gives a copy-paste Material3 implementation, a no-experimental-API fallback built on HorizontalPager, and the framework-agnostic math to port it to SwiftUI, Flutter, or the web. Use when implementing hero carousels, morphing/expanding cards, centered featured-card rows, "big card shrinks as it scrolls", or cover-flow-style pager UIs.
-version: 1.0.0
+description: Build a horizontally scrollable "hero carousel" where a big center card continuously morphs its width into different-size rectangles as it scrolls (the Material 3 / music-app "Quick Picks" effect). Explains why it is a pager with clipping + translation (not resizing), then gives three clearly-labeled fidelity tiers: exact Material replication, a faithful custom keyline implementation (no experimental API), and a scale-based approximation. Includes the real keyline interpolation math and cross-framework porting notes. Use when implementing hero carousels, morphing/expanding cards, centered featured-card rows, "big card shrinks as it scrolls", or cover-flow-style pager UIs.
+version: 1.1.0
 author: JusDots Devs
 domain: UI / interaction design
 tags: carousel, pager, material3, jetpack-compose, animation, hero-card, android, swiftui, flutter
@@ -13,6 +13,7 @@ metadata:
   - hero carousel
   - morphing cards
   - centered carousel
+  - keyline
   - pager animation
   - HorizontalCenteredHeroCarousel
   - cover flow
@@ -27,60 +28,101 @@ the neighbors peek out small on both sides, and a swipe advances one card with a
 
 This is the effect used by the "Quick Picks" section on music-app home screens.
 
-## The core principle (understand this first)
+## IMPLEMENTATION INVARIANT
 
-The cards do **not** change size in layout, and this is **not** a `LazyRow`. The effect is a
-**pager** of full-size pages where each page gets a **clip rectangle** (its visible width) plus a
+> **Do not implement the morph by changing the measured width of the pager page.**
+>
+> The page's layout size stays constant. The visual effect is produced from the scroll
+> position by:
+>
+> 1. determining the page center,
+> 2. resolving it against keylines (the keyline before and the keyline after),
+> 3. interpolating both the keyline's **size** and its **offset**,
+> 4. clipping the page to the interpolated width,
+> 5. translating the page to the interpolated offset,
+> 6. applying z-order (focused page on top).
+>
+> Never use `Modifier.width()` driven by scroll, `animateDpAsState`, `animateContentSize`,
+> or per-frame re-measurement. Those produce re-layout jank and are not this effect.
+
+## How the effect actually works
+
+The cards do **not** change size in layout, and this is **not** a `LazyRow`. It is a **pager**
+of full-size pages where each page gets a **clip rectangle** (its visible width) plus a
 **translation** that pins its clipped edges against its neighbors. Every scroll frame, the clip
-width and translation are recomputed from the scroll offset — so the morph is a smooth,
-fraction-of-a-pixel interpolation, never a discrete step.
+width and translation are recomputed from the scroll offset — a smooth, fraction-of-a-pixel
+interpolation, never a discrete step.
 
-Three ingredients:
+The mechanism:
 
-1. **Pages laid out end-to-end at one fixed "hero" width** — every page is measured at the full
-   hero size regardless of what you see.
-2. **Keylines** — fixed positions on the scroll axis that define the width a card should have
-   when its center is there. For a centered hero the scheme is `[anchor(small) | small | LARGE |
-   small | anchor(small)]`. The large keyline = hero width; small keylines ≈ large/3 (clamped,
-   e.g. 40–56dp); anchors are tiny peeks so cards never fully collapse.
-3. **Per-frame mask + translate + z-order** — for each visible page, interpolate between the
-   keylines before/after its center to get `interpolatedKeyline`, then:
-   - **clip** the page to a rect of width `interpolatedKeyline.size`, centered on the page,
-   - **translate** it by `interpolatedKeyline.offset - pageCenter` so clipped edges stay pinned
-     to its neighbors (no gaps),
-   - **draw the focused card on top** (`z = 1/(1+distanceFromFocus)`).
+1. **Pages are measured end-to-end at one fixed "hero" width.** The focused card is that width.
+2. **Keylines** are fixed positions along the scroll axis that define the width a card should
+   have when its center is there. For a centered hero the scheme is
+   `[small | LARGE | small]`: the large keyline = hero width; the small keylines ≈ large/3
+   (clamped, e.g. 40–56dp); tiny anchor keylines at the very edges keep cards from collapsing.
+3. **Per-frame mask + translate + z-order** (see the math below).
 
-### The math (framework-agnostic)
+## The math — keyline interpolation (framework-agnostic)
+
+A **keyline** is a `(offset, size)` pair: the width a card should have when its center is at
+`offset`. For a centered hero, relative to the focus position, with `H` = hero width, `W` =
+small width, `S` = item spacing:
 
 ```
-pageSize   = heroWidth + spacing
-pageCenter = index * pageSize + heroWidth/2 - scrollOffset
-
-focus       = clamp(1 - abs(pageCenter - viewportCenter) / (heroWidth + smallWidth + spacing), 0, 1)
-visibleWidth = lerp(smallWidth, heroWidth, focus)      // <- the morphing width
-translate    = (pageCenter - viewportCenter) * 0.5     // pin edges to neighbours
-zIndex       = 1 / (1 + distanceFromFocusPage)
+keylines = [ (-(H/2 + S + W/2), W),        // left small
+             ( 0,                H),        // LARGE
+             (+(H/2 + S + W/2), W) ]       // right small
 ```
 
-Anything from raw Canvas to a scroll listener can implement this. The rest of this skill gives
-battle-tested Compose implementations and porting notes.
+For each visible page, `distanceFromFocus` is how many page-strides it sits from the focused
+page (a continuous float during scroll). Then:
+
+```
+relCenter = distanceFromFocus * (H + S)            // page center vs. viewport center
+
+before     = keyline with the largest offset <= relCenter
+after      = keyline with the smallest offset >= relCenter
+progress   = (relCenter - before.offset) / (after.offset - before.offset)
+size       = lerp(before.size, after.size, progress)
+keylineOff = lerp(before.offset, after.offset, progress)
+
+clip width   = size                              // mask rect, centered on the page
+translate    = keylineOff - relCenter            // pin the clipped edge to its neighbour
+zIndex       = 1 / (1 + distanceFromFocus)
+```
+
+`size` and `translate` are **pure functions of the scroll position** — that is what makes the
+morph continuous and cheap. Worked trace at rest: focused page `relCenter = 0` → size `H`,
+translate `0`; neighbor at `relCenter = H + S` → size `W`; halfway between the large and small
+keyline → size halfway between `H` and `W`. Because adjacent pages interpolate against the
+*same shared* small keyline, their clipped edges stay pinned together with no gap.
 
 ---
 
-## Option A — Material3 carousel (recommended, perfect replication)
+# Choosing a fidelity tier
 
-This is the reference implementation. It handles snapping, RTL, anchors, and the end-of-list edge
-cases (the first/last card becomes large at the edge of the screen) for you.
+| Tier | Use when | Effect fidelity | Dependency |
+|---|---|---|---|
+| **1. Material replication** | Android/Compose, need the exact Material behavior (anchors, edge shifting, built-in snap) | Exact | `androidx.compose.material3` carousel |
+| **2. Custom keyline** | Need the real morph but no experimental API, or custom keylines | Very close (same keyline + clip/translate mechanism) | `HorizontalPager` only |
+| **3. Approximation (scale)** | Visual similarity is enough and simplicity matters | Similar look, proportional scaling, not width-only | `HorizontalPager` only |
+
+---
+
+## Tier 1 — Material replication (exact)
+
+This is the reference implementation. It also handles snapping, RTL, and the end-of-list edge
+cases (the first/last card grows large at the *edge* of the screen) for you.
 
 **Dependency**: `androidx.compose.material3:material3` with the carousel APIs (present since
 `1.3.0`; confirmed on `1.5.x`).
 
-**Opt-in required**:
+**Opt-in required**: `@OptIn(ExperimentalMaterial3Api::class)`.
 
 ```kotlin
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun QuickPicksCarousel(
+fun HeroCarousel(
     itemCount: Int,
     heroWidth: Dp,
     carouselHeight: Dp,
@@ -89,8 +131,8 @@ fun QuickPicksCarousel(
 ) {
     HorizontalCenteredHeroCarousel(
         state = rememberCarouselState { itemCount },
-        maxItemWidth = heroWidth,             // the LARGE keyline size
-        itemSpacing = 10.dp,                  // gap between pages
+        maxItemWidth = heroWidth,              // the LARGE keyline size
+        itemSpacing = 10.dp,                   // gap between pages
         contentPadding = PaddingValues(horizontal = 16.dp),
         modifier =
             modifier
@@ -102,20 +144,21 @@ fun QuickPicksCarousel(
 }
 ```
 
-**Typical card content** (full-bleed artwork + scrim + title, the Quick Picks look):
+**Typical card content** (full-bleed artwork + scrim + title — the Quick Picks look). `maskClip`
+/ `maskBorder` come from `CarouselItemScope` and keep the corners correct while the mask morphs:
 
 ```kotlin
 HorizontalCenteredHeroCarousel(...) { index ->
-    val song = items[index]
+    val item = items[index]
     Box(
         Modifier
             .fillMaxSize()
-            .maskClip(MaterialTheme.shapes.extraLarge)                 // rounded corners
+            .maskClip(MaterialTheme.shapes.extraLarge)                  // rounded corners on the mask
             .maskBorder(BorderStroke(1.dp, outlineVariant), extraLarge) // optional outline
             .clickable { /* play */ },
     ) {
-        AsyncImage(model = song.artwork, contentScale = ContentScale.Crop, modifier = Modifier.fillMaxSize())
-        Box(                                                          // bottom scrim
+        AsyncImage(model = item.artwork, contentScale = ContentScale.Crop, modifier = Modifier.fillMaxSize())
+        Box(                                                            // bottom scrim
             Modifier.fillMaxSize().background(
                 Brush.verticalGradient(
                     0f to Color.Transparent,
@@ -125,7 +168,7 @@ HorizontalCenteredHeroCarousel(...) { index ->
             ),
         )
         Text(
-            song.title,
+            item.title,
             color = Color.White,
             fontWeight = FontWeight.Black,
             modifier = Modifier.align(Alignment.BottomStart).padding(16.dp),
@@ -134,71 +177,112 @@ HorizontalCenteredHeroCarousel(...) { index ->
 }
 ```
 
-`maskClip`/`maskBorder` come from `androidx.compose.material3.carousel.CarouselItemScope` — they
-round the mask rectangle correctly while it morphs.
-
 **Tuning**:
 
 | Param | Effect |
 |---|---|
-| `maxItemWidth` | Size of the large keyline. `Dp.Unspecified` = one large item filling the viewport minus two small items. Set it to `viewportWidth - 48.dp` (clamped) for a hero that's slightly narrower than the screen. |
+| `maxItemWidth` | Large keyline size. `Dp.Unspecified` = one large item filling the viewport minus two small items. For a hero slightly narrower than the screen, use `viewportWidth - 48.dp` (clamped). |
 | `itemSpacing` | Gap between pages (e.g. `10.dp`). |
-| `minSmallItemWidth` / `maxSmallItemWidth` | Clamp for the small side cards (defaults `40.dp`/`56.dp`). |
+| `minSmallItemWidth` / `maxSmallItemWidth` | Clamp for the small side cards (defaults `40.dp` / `56.dp`). |
 | `contentPadding` | Inset before the first / after the last page. |
-| `flingBehavior` | Default = `singleAdvanceFlingBehavior` (one card per swipe, `spring(MediumLow)` snap). |
+| `flingBehavior` | Default `singleAdvanceFlingBehavior` = one card per swipe with `spring(MediumLow)` snap. |
 
 ---
 
-## Option B — No experimental API (fallback, `HorizontalPager` + scale)
+## Tier 2 — Custom keyline implementation (no experimental API)
 
-Use this when you can't depend on the carousel API or need something simpler. It produces a very
-close look — big focused card, smaller side cards that grow/shrink while scrolling — via a
-`graphicsLayer` scale. Trade-off vs Option A: it scales both dimensions (aspect-preserving) rather
-than clipping width-only, so the side cards are smaller but keep their proportions. Set
-`beyondViewportPageCount` so neighbors are composed in time to animate in.
+A faithful port of the same mechanism: pages stay at hero width, a `graphicsLayer` clips each
+page to the interpolated keyline width and translates it to stay pinned. Reads the pager's
+per-frame offset inside `graphicsLayer`, so it morphs without recomposition.
 
 ```kotlin
 @Composable
-fun CenteredHeroCarousel(
+fun KeylineHeroCarousel(
     itemCount: Int,
     heroWidth: Dp,
     carouselHeight: Dp,
     modifier: Modifier = Modifier,
+    smallWidth: Dp = 56.dp,
     itemSpacing: Dp = 10.dp,
-    smallScale: Float = 0.72f,        // scale of the side cards
-    edgeAlpha: Float = 0.65f,         // fade at the far edges
     content: @Composable (index: Int) -> Unit,
 ) {
     val density = LocalDensity.current
+    val heroPx = with(density) { heroWidth.toPx() }
+    val smallPx = with(density) { smallWidth.toPx() }
+    val spacingPx = with(density) { itemSpacing.toPx() }
     val pagerState = rememberPagerState { itemCount }
-    val heroWidthPx = with(density) { heroWidth.toPx() }
+    val mask = remember { MutableMaskRect() }
+    val maskShape = remember(mask) { MaskRectShape(mask) }
 
     BoxWithConstraints(modifier = modifier) {
-        val peek = (maxWidth - heroWidth) / 2      // equal peeks on both sides
+        val viewportPx = with(density) { maxWidth.toPx() }
+        // The hero must fit inside the viewport, or the centering math is meaningless.
+        val safeHeroPx = heroPx.coerceAtMost(viewportPx)
+        val peekPx = ((viewportPx - safeHeroPx) / 2f).coerceAtLeast(0f)
+
         HorizontalPager(
             state = pagerState,
-            pageSize = object : PageSize {         // pages are exactly heroWidth
-                override fun Density.calculateMainAxisPageSize(availableSpace: Int, pageSpacing: Int) =
-                    heroWidthPx.roundToInt()
+            pageSize = remember(safeHeroPx) {
+                object : PageSize {
+                    override fun Density.calculateMainAxisPageSize(
+                        availableSpace: Int,
+                        pageSpacing: Int,
+                    ): Int = safeHeroPx.roundToInt()
+                }
             },
             pageSpacing = itemSpacing,
-            contentPadding = PaddingValues(horizontal = peek.coerceAtLeast(0.dp)),
-            beyondViewportPageCount = 2,
+            contentPadding = PaddingValues(horizontal = peekPx.dp),
+            beyondViewportPageCount = 1,
             modifier = Modifier.fillMaxWidth().height(carouselHeight),
         ) { index ->
-            val pageOffset =
-                (pagerState.currentPage - index) + pagerState.currentPageOffsetFraction
-            val progress = (1f - abs(pageOffset)).coerceIn(0f, 1f)   // 1.0 = focused
+            val stride = safeHeroPx + spacingPx
+            val smallOffset = safeHeroPx / 2f + spacingPx + smallPx / 2f
+            // Keylines relative to the focus: [small | LARGE | small]
+            val keylines = listOf(
+                Keyline(-smallOffset, smallPx),
+                Keyline(0f, safeHeroPx),
+                Keyline(smallOffset, smallPx),
+            )
+
             Box(
                 modifier =
                     Modifier
                         .fillMaxSize()
+                        .zIndex(1f / (1f + abs(pagerState.currentPage - index)))
                         .graphicsLayer {
-                            scaleX = lerp(smallScale, 1f, progress)
-                            scaleY = lerp(smallScale, 1f, progress)
-                            translationX = pageOffset * 24f           // extra "pop" feel
-                            alpha = lerp(edgeAlpha, 1f, progress)
-                            clip = true                               // keep corners sharp
+                            // Per-frame distance from the focused page, in strides.
+                            val distance =
+                                (pagerState.currentPage - index) +
+                                    pagerState.currentPageOffsetFraction
+                            val relCenter = distance * stride
+
+                            // Interpolate between the keylines bracketing this page's center.
+                            val before = keylines.lastOrNull { it.offset <= relCenter }
+                            val after = keylines.firstOrNull { it.offset >= relCenter }
+                            val lo = before ?: after!!
+                            val hi = after ?: before!!
+                            val progress =
+                                if (hi.offset > lo.offset) {
+                                    ((relCenter - lo.offset) / (hi.offset - lo.offset))
+                                        .coerceIn(0f, 1f)
+                                } else {
+                                    0f
+                                }
+                            val size = lerp(lo.size, hi.size, progress)
+                            val keylineOffset = lerp(lo.offset, hi.offset, progress)
+
+                            // Clip to the interpolated width (mask rect is page-local).
+                            mask.set(
+                                safeHeroPx / 2f - size / 2f,
+                                0f,
+                                safeHeroPx / 2f + size / 2f,
+                                this.size.height,
+                            )
+                            this.shape = maskShape
+                            clip = true
+
+                            // Translate so the clipped center sits on the interpolated keyline.
+                            translationX = keylineOffset - relCenter
                         },
             ) {
                 content(index)
@@ -206,55 +290,162 @@ fun CenteredHeroCarousel(
         }
     }
 }
+
+private data class Keyline(val offset: Float, val size: Float)
+
+private class MutableMaskRect {
+    var left = 0f
+    var top = 0f
+    var right = 0f
+    var bottom = 0f
+    fun set(l: Float, t: Float, r: Float, b: Float) {
+        left = l; top = t; right = r; bottom = b
+    }
+}
+
+private class MaskRectShape(private val mask: MutableMaskRect) : Shape {
+    override fun createOutline(
+        size: Size,
+        layoutDirection: LayoutDirection,
+        density: Density,
+    ): Outline = Outline.Rectangle(Rect(mask.left, mask.top, mask.right, mask.bottom))
+}
 ```
 
-Notes:
+Important details:
 
-- `pagerState.currentPage - index + pagerState.currentPageOffsetFraction` gives a continuous
-  -1..1-ish distance even mid-gesture, so the scale animates with every scroll frame.
-- For a width-only morph (height stays constant, rectangles change proportions — closer to
-  Option A), clip instead of scale: keep pages at `fillMaxSize` and apply a `Modifier.layout`
-  that sets the visible mask width to `lerp(smallWidthPx, heroWidthPx, progress)` and translates
-  by `(1f - progress) * (heroWidthPx - smallWidthPx) / 2f` to close the gaps.
-- Snapping: Pager snaps by default. To limit a fling to one card, pass
+- The `graphicsLayer` block runs every draw frame; reading `pagerState.currentPageOffsetFraction`
+  there gives the live offset **without recomposition** — that is what makes the morph buttery.
+- The mask is a **rectangle** (width-only morph, height constant — the real effect). Rounded
+  corners are NOT produced by `clip = true`; they come from the card content's own shape, so make
+  each page's content a `Card`/`.clip(RoundedCornerShape(...))` of its own.
+- The `clip = true` here only clips to the computed mask shape; the width morph is the mask,
+  the height stays full.
+- If your compiler flags `PageSize`, add `@OptIn(ExperimentalFoundationApi::class)` to the
+  composable.
+- Edge behavior: unlike Tier 1, the first/last card does not grow large at the screen edge — it
+  simply stays small. Acceptable for short lists or when users rarely reach the ends.
+- Snap: Pager snaps by default. To limit a fling to one card:
   `flingBehavior = PagerDefaults.flingBehavior(state = pagerState, pagerSnapDistance = PagerSnapDistance.atMost(1))`.
+
+---
+
+## Tier 3 — Approximation (proportional scaling)
+
+> **Warning: this is NOT the same effect.** It scales the whole card proportionally (both
+> dimensions), so rectangles keep their proportions instead of morphing width-only. Use it only
+> when visual similarity is enough and the clip-based approaches aren't worth it.
+
+Rounded corners come from the `Card`'s own shape (the `Card` clips itself) — `graphicsLayer
+{ clip = true }` would only clip to the rectangular layer bounds, it does **not** create the
+morphing mask.
+
+```kotlin
+@Composable
+fun ScaledHeroCarousel(
+    itemCount: Int,
+    heroWidth: Dp,
+    carouselHeight: Dp,
+    modifier: Modifier = Modifier,
+    itemSpacing: Dp = 10.dp,
+    smallScale: Float = 0.72f,     // scale of the side cards
+    edgeAlpha: Float = 0.65f,      // fade at the far edges
+    content: @Composable (index: Int) -> Unit,
+) {
+    val density = LocalDensity.current
+    val heroPx = with(density) { heroWidth.toPx() }
+    val pagerState = rememberPagerState { itemCount }
+
+    BoxWithConstraints(modifier = modifier) {
+        val viewportPx = with(density) { maxWidth.toPx() }
+        val safeHeroPx = heroPx.coerceAtMost(viewportPx)          // hero must fit the viewport
+        val peekPx = ((viewportPx - safeHeroPx) / 2f).coerceAtLeast(0f)
+
+        HorizontalPager(
+            state = pagerState,
+            pageSize = remember(safeHeroPx) {
+                object : PageSize {
+                    override fun Density.calculateMainAxisPageSize(
+                        availableSpace: Int,
+                        pageSpacing: Int,
+                    ): Int = safeHeroPx.roundToInt()
+                }
+            },
+            pageSpacing = itemSpacing,
+            contentPadding = PaddingValues(horizontal = peekPx.dp),
+            beyondViewportPageCount = 2,
+            modifier = Modifier.fillMaxWidth().height(carouselHeight),
+        ) { index ->
+            Box(
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .graphicsLayer {
+                            val distance =
+                                (pagerState.currentPage - index) +
+                                    pagerState.currentPageOffsetFraction
+                            val progress = (1f - abs(distance)).coerceIn(0f, 1f)  // 1.0 = focused
+                            scaleX = lerp(smallScale, 1f, progress)
+                            scaleY = lerp(smallScale, 1f, progress)
+                            translationX = distance * 24f                        // extra "pop"
+                            alpha = lerp(edgeAlpha, 1f, progress)
+                        },
+            ) {
+                Card(
+                    shape = RoundedCornerShape(28.dp),   // rounding lives on the Card, not the layer
+                    modifier = Modifier.fillMaxSize(),
+                ) {
+                    content(index)
+                }
+            }
+        }
+    }
+}
+```
 
 ---
 
 ## Porting to other frameworks
 
-Same three ingredients, different vocabulary:
+Same three ingredients, different vocabulary — and the keyline math above is the port.
 
-- **SwiftUI**: `ScrollView(.horizontal)` + `onScrollGeometryChange` to read `scrollOffset`, then
-  per-view `scaleEffect`, `offset(x:)`, `zIndex`, and `.clipShape` — or `TabView(PageStyle)` for
-  snap. Compute `progress` and `visibleWidth` with the math above.
-- **Flutter**: `PageView.builder` with `itemBuilder` each wrapped in a `Transform.scale` +
-  `Transform.translate` driven by `pageController.position` / an `AnimatedBuilder` reading the
-  fractional scroll offset. Use `viewportFraction` to control how much of the neighbors peek.
-- **Web/JS**: a scroll container with `scrollLeft` → `progress = 1 - |cardCenter - viewportCenter|/w`,
-  then `transform: scale()` + `translateX()` + `z-index`, or `clip-path: inset()` for the
-  width-only variant. `scroll-snap-type: x mandatory` for snapping.
+- **SwiftUI**: `ScrollView(.horizontal)` + `onScrollGeometryChange` to read the offset, then
+  per-view `scaleEffect` / `offset(x:)` / `zIndex` — or `TabView(PageStyle)` for snap. For the
+  width-only morph use `clipShape` with a rectangle sized by `size` from the keyline math.
+- **Flutter**: `PageView.builder` + `AnimatedBuilder` reading the fractional page offset, each
+  page wrapped in `Transform.scale` / `Transform.translate`; `viewportFraction` controls the peeks.
+- **Web/JS**: a scroll container reading `scrollLeft`; `transform: scale()` + `translateX()` +
+  `z-index`, or `clip-path: inset()` for the width-only variant. `scroll-snap-type: x mandatory`
+  for snapping.
 
-Whichever stack you use, the invariant is: **pages are full-size; you only ever change a clip and
-a translate (plus z-order) as a pure function of scroll offset.**
+Whichever stack you use, the invariant holds: **pages are full-size; you only ever change a clip
+and a translate (plus z-order) as a pure function of scroll offset.**
 
 ---
 
 ## Customization & gotchas
 
-- **Gap / small-size clamping**: keep the small keyline at roughly large/3 but clamp it
-  (40–56dp) — otherwise side cards on a wide hero look comically tiny or too big to read as "peek".
-- **Rounding corners**: apply corner rounding to the *masked* shape (Option A: `maskClip` /
-  `maskBorder`; Option B: `clip = true` in `graphicsLayer`), not to the unscaled page, or you'll
-  see the full-size page's corners slide around while it morphs.
-- **Height must be fixed**: all pages share one row height (e.g. 332–380dp for a phone/tablet);
-  the morph changes only width. Give the carousel an explicit `height(...)`.
-- **Don't force resize in layout** — it causes re-layout churn and visible jank. The clip/translate
-  approach is purely visual, so it runs at 60/120fps without recomposing.
-- **Edge behavior**: Option A keeps the first/last card becoming large at the screen edge via
-  internal keyline "steps". The Option B fallback simply shows edge cards small — acceptable when
-  the list has a handful of items or users rarely reach the ends.
-- **Accessibility / semantics**: keep each card a real clickable/tappable element with a label;
-  the clip is purely visual and should not remove focus targets.
-- **Prefetch**: set `beyondViewportPageCount`/prefetch distance so off-screen neighbors are
+- **Gap / small-size clamping**: keep the small keyline at roughly large/3 but clamped (40–56dp);
+  otherwise side cards on a wide hero look comically tiny or too big to read as "peek".
+- **Height must be fixed**: all pages share one row height (e.g. 332–380dp for phone/tablet); the
+  morph changes only width. Give the carousel an explicit `height(...)`.
+- **Round corners on the masked shape** (Tier 1: `maskClip`/`maskBorder`; Tier 2: a `Card`/clip
+  inside the page), never on the unscaled page — otherwise the full-size page's corners slide
+  around while it morphs.
+- **Hero must fit the viewport** (Tier 2/3): clamp `heroWidth <= maxWidth` and derive the peeks
+  from `BoxWithConstraints`, or the centering math is nonsense.
+- **Edge behavior**: Tier 1 keeps the first/last card growing large at the screen edge via internal
+  keyline "steps". Tiers 2–3 just show edge cards small.
+- **Prefetch**: set `beyondViewportPageCount` (Tier 1 handles this internally) so neighbors are
   measured before they scroll into the morph region.
+- **Accessibility**: keep each card a real tappable element with a label; the clip is purely
+  visual and must not remove focus targets.
+
+## Anti-patterns (do NOT do these)
+
+- ❌ `Modifier.width(...)` animated from scroll position — re-layout churn, jank.
+- ❌ `animateDpAsState` / `animateContentSize` driven by the current page — discrete, not the
+  per-frame morph, and it fights the scroll.
+- ❌ Re-measuring pages at different sizes per index in the pager — breaks the invariant.
+- ❌ Building it on a `LazyRow` with per-item width snapshots — you lose the pinned-edge
+  continuity and the buttery per-frame morph.
