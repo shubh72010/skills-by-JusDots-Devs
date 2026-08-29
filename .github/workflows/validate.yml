@@ -25,6 +25,9 @@ jobs:
         with:
           python-version: "3.12"
 
+      - name: Install deps
+        run: pip install pyyaml
+
       - name: Validate SKILL.md frontmatter
         run: |
           python3 <<'PY'
