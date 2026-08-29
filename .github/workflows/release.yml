@@ -48,8 +48,8 @@ jobs:
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v${{ github.run_number }}
-          name: v${{ github.run_number }}
+          tag_name: hub-v${{ github.run_number }}
+          name: hub-v${{ github.run_number }}
           body: |
             Auto-release from `${{ github.sha }}` on `main`.
 
