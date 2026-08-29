@@ -13,6 +13,7 @@ covering specialized reasoning, development workflows, and UI/UX building blocks
 | **crossthink** | Reasoning | Divergent cross-domain brainstorming: a 5-phase workflow that separates exploration, independent domain analysis, synthesis, and critical evaluation to avoid anchoring bias. | [README](skills/crossthink/README.md) · [SKILL](skills/crossthink/SKILL.md) |
 | **segmented-connect-list** | UI building blocks | Jetpack Compose rows that look "separate but connected" — a single rounded panel split into segments via per-position corner radii and a 2dp seam gap. | [SKILL](skills/segmented-connect-list/SKILL.md) |
 | **centered-hero-carousel** | UI building blocks | Morphing hero carousel — a big center card that continuously changes width into different-size rectangles as it scrolls (Material 3 / Quick Picks effect). Pager + clip + translate, with a no-experimental-API fallback and cross-framework porting math. | [SKILL](skills/centered-hero-carousel/SKILL.md) |
+| **setup** | Workflow | Project bootstrap: analyze codebase → generate README/ARCHITECTURE/DESIGN_LANGUAGE/CLAUDE/AGENTS → configure GitHub settings/topics/Dependabot → create nightly branch → add Actions for APK build + changelog + release. | [SKILL](skills/setup/SKILL.md) |
 
 ## Quick Start
 
@@ -58,8 +59,12 @@ skills-by-JusDots-Devs/
     │   ├── README.md          ← Skill documentation + examples
     │   ├── examples/          ← Worked examples
     │   └── images/            ← Banners and diagrams
-    └── segmented-connect-list/
-        └── SKILL.md           ← Compose "separate but connected" list rows
+    ├── segmented-connect-list/← Compose "separate but connected" list rows
+    │   └── SKILL.md
+    ├── centered-hero-carousel/← Morphing hero carousel (pager + clip/translate)
+    │   └── SKILL.md
+    └── setup/                 ← Project bootstrap (/setup → docs + GitHub + CI)
+        └── SKILL.md
 ```
 
 ## Adding a Skill
