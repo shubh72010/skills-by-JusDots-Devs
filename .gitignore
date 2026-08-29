@@ -12,3 +12,12 @@ node_modules/
 .agents/
 .claude/
 skills-lock.json
+
+# Credentials & secrets (hardened by /setup)
+*.jks
+*.p12
+*.keystore
+keystore.properties
+local.properties
+google-services.json
+.gradle/

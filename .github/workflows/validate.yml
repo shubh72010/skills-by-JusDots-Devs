@@ -1,0 +1,96 @@
+name: validate
+
+on:
+  push:
+    branches: [main, nightly]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: validate-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+
+      - name: Validate SKILL.md frontmatter
+        run: |
+          python3 <<'PY'
+          import pathlib, yaml, sys, re
+          errors = []
+          for p in pathlib.Path("skills").glob("*/SKILL.md"):
+              text = p.read_text(encoding="utf-8")
+              if not text.startswith("---"):
+                  errors.append(f"{p}: missing frontmatter delimiter")
+                  continue
+              try:
+                  _, fm, _ = text.split("---", 2)
+                  data = yaml.safe_load(fm)
+              except Exception as e:
+                  errors.append(f"{p}: YAML parse error: {e}")
+                  continue
+              for f in ("name","description","version","author","domain","tags"):
+                  if f not in data or not data[f]:
+                      errors.append(f"{p}: missing required field '{f}'")
+              # folder/name match
+              name = data.get("name","")
+              if p.parent.name != name:
+                  errors.append(f"{p}: folder '{p.parent.name}' != frontmatter name '{name}'")
+              # description trigger phrase (Use when / Triggers on)
+              desc = str(data.get("description",""))
+              if "Use when" not in desc and "Trigger" not in desc:
+                  errors.append(f"{p}: description should contain 'Use when...' or 'Triggers on...' trigger")
+          if errors:
+              print("\n".join(errors))
+              sys.exit(1)
+          print(f"Frontmatter OK — {len(list(pathlib.Path('skills').glob('*/SKILL.md')))} skills checked")
+          PY
+
+      - name: Check README skill table is in sync
+        run: |
+          python3 <<'PY'
+          import re, pathlib
+          readme = pathlib.Path("README.md").read_text(encoding="utf-8")
+          skills = sorted(p.parent.name for p in pathlib.Path("skills").glob("*/SKILL.md"))
+          missing = [s for s in skills if s not in readme]
+          if missing:
+              print(f"WARNING: skills missing from README table: {missing}")
+              print("Please update README.md skill table.")
+          else:
+              print(f"README table covers all skills: {skills}")
+          PY
+
+      - name: YAML lint (workflows + dependabot)
+        run: |
+          python3 <<'PY'
+          import yaml, pathlib, sys
+          ok = True
+          for p in list(pathlib.Path(".github").rglob("*.yml")) + list(pathlib.Path(".github").rglob("*.yaml")):
+              try:
+                  yaml.safe_load(p.read_text(encoding="utf-8"))
+                  print(f"✓ {p}")
+              except Exception as e:
+                  print(f"✗ {p}: {e}")
+                  ok = False
+          sys.exit(0 if ok else 1)
+          PY
+
+      - name: No secrets in diff
+        run: |
+          if git log --all -p 2>/dev/null | grep -Eq "-----BEGIN (RSA )?PRIVATE KEY-----|ghp_[A-Za-z0-9_]{36}|AKIA[0-9A-Z]{16}"; then
+            echo "::error::Potential secret found in git history"
+            exit 1
+          fi
+          echo "No obvious secrets found"
