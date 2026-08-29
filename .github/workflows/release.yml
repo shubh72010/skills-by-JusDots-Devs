@@ -2,7 +2,7 @@ name: release
 
 on:
   push:
-    branches: [main]
+    tags: ["v*"]
   workflow_dispatch:
 
 permissions:
@@ -23,7 +23,7 @@ jobs:
       - name: Generate changelog
         id: changelog
         run: |
-          LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+          LAST_TAG=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo "")
           if [ -z "$LAST_TAG" ]; then
             LOG=$(git log --oneline --no-merges | head -n 20)
           else
@@ -35,29 +35,23 @@ jobs:
             echo "$LOG"
             echo "EOF"
           } >> "$GITHUB_OUTPUT"
-          echo "Changelog between ${LAST_TAG:-HEAD~} and HEAD:"
+          echo "Changelog since ${LAST_TAG:-start}:"
           echo "$LOG"
 
       - name: Package skills
         run: |
           zip -r skills-hub.zip skills/ README.md ARCHITECTURE.md CLAUDE.md AGENTS.md CONTRIBUTING.md LICENSE 2>/dev/null || zip -r skills-hub.zip skills/
           ls -lh skills-hub.zip
-          echo "Skills included:"
           unzip -l skills-hub.zip | head -n 30
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: hub-v${{ github.run_number }}
-          name: hub-v${{ github.run_number }}
+          # tag_name/name taken from the pushed tag (github.ref_name) — no auto hub-vN
+          generate_release_notes: true
           body: |
-            Auto-release from `${{ github.sha }}` on `main`.
-
             **Changelog (since last tag):**
             ```
             ${{ steps.changelog.outputs.log }}
             ```
-
-            > Generated release notes below are auto-filled by GitHub.
-          generate_release_notes: true
           files: skills-hub.zip
