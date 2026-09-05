@@ -45,7 +45,7 @@ jobs:
           unzip -l skills-hub.zip | head -n 30
 
       - name: Create GitHub Release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           # tag_name/name taken from the pushed tag (github.ref_name) — no auto hub-vN
           generate_release_notes: true
